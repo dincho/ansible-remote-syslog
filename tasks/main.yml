@@ -22,13 +22,16 @@
   notify:
     - restart remote_syslog
 
-- name: copy init script (Ubuntu)
+- name: copy upstart script
   copy: src=remote_syslog.upstart.conf dest=/etc/init/remote_syslog.conf
   when: ansible_distribution == 'Ubuntu'
 
-- name: copy init script (Debian)
-  copy: src=remote_syslog.init.d dest=/etc/init.d/remote_syslog
-  when: ansible_distribution == 'Debian'
+- name: copy init script
+  copy:
+    src: remote_syslog.init.d
+    dest: /etc/init.d/remote_syslog
+    mode: 0744
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'CentOS'
 
 - name: Ensure syslog host is set
   fail: msg="You must set syslog host (remote_syslog_host)"
